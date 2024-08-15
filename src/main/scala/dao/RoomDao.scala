@@ -1,5 +1,7 @@
 package dao
 
+import dao.`trait`.Dao
+
 import java.sql.*
 import scala.collection.immutable.Nil.:::
 
@@ -9,7 +11,7 @@ case class RoomsList(RoomsList: List[Room])
 
 // select field1, field2 from is better than to select * from
 // by default jdbc rolls back transaction when throw exception
-object RoomDao {
+object RoomDao extends Dao[Room] {
 
   private val url: String = "jdbc:postgresql://localhost:5432/challenge_scala"
   private val user: String = "postgres"
@@ -29,14 +31,14 @@ object RoomDao {
       }
       room
     } catch {
-      case e: SQLException => throw e
+      case e: Exception => throw e
     } finally {
       resultSet.close()
       connection.close()
     }
   }
 
-  def findAll: RoomsList = {
+  def findAll: List[Room] = {
     val connection: Connection = DriverManager.getConnection(url, user, password)
     var resultSet: ResultSet = null
     var rooms: List[Room] = List()
@@ -45,7 +47,7 @@ object RoomDao {
       while (resultSet.next()) {
         rooms = rooms ::: Room(resultSet.getLong("id"), resultSet.getString("number"), resultSet.getString("type")) :: Nil
       }
-      RoomsList(rooms)
+      rooms
     } catch {
       case e: Exception => throw e
     } finally {
@@ -62,6 +64,24 @@ object RoomDao {
       preparedStatement.setString(1, room.number)
       preparedStatement.setString(2, room.rtype)
       preparedStatement.setLong(3, id)
+      val rows: Integer = preparedStatement.executeUpdate()
+
+      if rows == 0 then
+        throw new SQLException("Operation failed.")
+    } catch {
+      case e: Exception => throw e
+    } finally {
+      preparedStatement.close()
+      connection.close()
+    }
+  }
+
+  def delete(id: Long): Unit = {
+    val connection: Connection = DriverManager.getConnection(url, user, password)
+    var preparedStatement: PreparedStatement = null
+    try {
+      preparedStatement = connection.prepareStatement(s"""DELETE FROM "Room" WHERE id = ?""")
+      preparedStatement.setLong(1, id)
       val rows: Integer = preparedStatement.executeUpdate()
 
       if rows == 0 then

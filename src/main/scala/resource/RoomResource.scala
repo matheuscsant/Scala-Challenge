@@ -62,6 +62,15 @@ object RoomResource {
           }
 
         }
+      } ~
+      path("room" / LongNumber) { id =>
+        delete {
+          complete {
+            roomService.deleteRoom(id)
+            HttpResponse(StatusCodes.NoContent)
+          }
+
+        }
       }
 
   }
