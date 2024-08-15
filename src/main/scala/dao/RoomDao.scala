@@ -7,6 +7,8 @@ case class Room(id: Long, number: String, rtype: String)
 
 case class RoomsList(RoomsList: List[Room])
 
+// select field1, field2 from is better than to select * from
+// by default jdbc rolls back transaction when throw exception
 object RoomDao {
 
   private val url: String = "jdbc:postgresql://localhost:5432/challenge_scala"
@@ -39,7 +41,6 @@ object RoomDao {
     var resultSet: ResultSet = null
     var rooms: List[Room] = List()
     try {
-      // select field1, field2 from is better than to select * from
       resultSet = connection.createStatement().executeQuery(s"""SELECT id, number, type FROM \"Room\"""")
       while (resultSet.next()) {
         rooms = rooms ::: Room(resultSet.getLong("id"), resultSet.getString("number"), resultSet.getString("type")) :: Nil
@@ -51,5 +52,49 @@ object RoomDao {
       resultSet.close()
       connection.close()
     }
+  }
+
+  def update(id: Long, room: Room): Unit = {
+    val connection: Connection = DriverManager.getConnection(url, user, password)
+    var preparedStatement: PreparedStatement = null
+    try {
+      preparedStatement = connection.prepareStatement(s"""UPDATE "Room" SET number = ?, type = ? WHERE id = ?""")
+      preparedStatement.setString(1, room.number)
+      preparedStatement.setString(2, room.rtype)
+      preparedStatement.setLong(3, id)
+      val rows: Integer = preparedStatement.executeUpdate()
+
+      if rows == 0 then
+        throw new SQLException("Operation failed.")
+    } catch {
+      case e: Exception => throw e
+    } finally {
+      preparedStatement.close()
+      connection.close()
+    }
+  }
+
+  def insert(room: Room): Long = {
+    val connection: Connection = DriverManager.getConnection(url, user, password)
+    var preparedStatement: PreparedStatement = null
+    var resultSet: ResultSet = null
+    try {
+      preparedStatement = connection.prepareStatement(s"""INSERT INTO "Room" (number, type) VALUES (?, ?) returning newId""")
+      preparedStatement.setString(1, room.number)
+      preparedStatement.setString(2, room.rtype)
+      preparedStatement.executeQuery()
+      resultSet = preparedStatement.getResultSet
+      if (resultSet.next())
+        resultSet.getLong("newId")
+      else
+        throw new SQLException("Operation failed.")
+    } catch {
+      case e: Exception => throw e
+    } finally {
+      resultSet.close()
+      preparedStatement.close()
+      connection.close()
+    }
+
   }
 }

@@ -1,6 +1,8 @@
 package resource
 
 import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport.*
+import akka.http.scaladsl.model.headers.Location
+import akka.http.scaladsl.model.{HttpResponse, StatusCodes}
 import akka.http.scaladsl.server
 import akka.http.scaladsl.server.Directives.*
 import akka.http.scaladsl.server.Route
@@ -28,6 +30,30 @@ object RoomResource {
         get {
           complete {
             roomService.getAllRooms
+          }
+        }
+      }
+      ~
+      path("room" / LongNumber) { id =>
+        put {
+          entity(as[Room]) {
+            room =>
+              complete {
+                roomService.updateRoom(id, room)
+                HttpResponse(StatusCodes.OK)
+              }
+          }
+
+        }
+      }
+      ~
+      path("room") {
+        post {
+          entity(as[Room]) {
+            room =>
+              val newId: Long = roomService.createRoom(room)
+              val headers = Location(s"http://localhost:8080/$newId")
+              complete(HttpResponse(StatusCodes.Created, headers = List(headers)))
           }
         }
       }

@@ -23,4 +23,12 @@ object RoomService {
       result
   }
 
+  def updateRoom(id: Long, room: Room): Unit = {
+    dao.update(id, room)
+  }
+
+  def createRoom(room: Room): Long = {
+    dao.insert(room)
+  }
+
 }
