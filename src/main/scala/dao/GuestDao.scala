@@ -92,8 +92,7 @@ object GuestDao extends Dao[Guest] {
     try {
       preparedStatement = connection.prepareStatement(s"""INSERT INTO "Guest" (name) VALUES (?) returning newId""")
       preparedStatement.setString(1, guest.name)
-      preparedStatement.executeQuery()
-      resultSet = preparedStatement.getResultSet
+      resultSet = preparedStatement.executeQuery()
       if (resultSet.next())
         resultSet.getLong("newId")
       else

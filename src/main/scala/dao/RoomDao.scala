@@ -97,8 +97,7 @@ object RoomDao extends Dao[Room] {
       preparedStatement = connection.prepareStatement(s"""INSERT INTO "Room" (number, type) VALUES (?, ?) returning newId""")
       preparedStatement.setString(1, room.number)
       preparedStatement.setString(2, room.rtype)
-      preparedStatement.executeQuery()
-      resultSet = preparedStatement.getResultSet
+      resultSet = preparedStatement.executeQuery()
       if (resultSet.next())
         resultSet.getLong("newId")
       else
