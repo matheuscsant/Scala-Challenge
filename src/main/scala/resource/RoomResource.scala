@@ -49,12 +49,18 @@ object RoomResource {
       ~
       path("room") {
         post {
-          entity(as[Room]) {
-            room =>
-              val newId: Long = roomService.createRoom(room)
-              val headers = Location(s"http://localhost:8080/$newId")
-              complete(HttpResponse(StatusCodes.Created, headers = List(headers)))
+          // getting context url
+          // https://doc.akka.io/docs/akka-http/current/routing-dsl/directives/basic-directives/extractUri.html
+          extractUri {
+            uri =>
+              entity(as[Room]) {
+                room =>
+                  val newId: Long = roomService.createRoom(room)
+                  val headers = Location(s"${uri.toString}/$newId")
+                  complete(HttpResponse(StatusCodes.Created, headers = List(headers)))
+              }
           }
+
         }
       }
 
