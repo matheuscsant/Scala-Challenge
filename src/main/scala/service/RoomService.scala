@@ -18,7 +18,7 @@ object RoomService {
 
   def getAllRooms: RoomsList = {
     val result: RoomsList = RoomsList(dao.findAll)
-    if result.RoomsList.isEmpty then
+    if result.roomsList.isEmpty then
       throw ResourceNotFound("No rooms were found.")
     else
       result

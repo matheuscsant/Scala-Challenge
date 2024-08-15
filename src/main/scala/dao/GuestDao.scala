@@ -6,25 +6,22 @@ import dao.`trait`.Dao
 import java.sql.{Connection, PreparedStatement, ResultSet, SQLException}
 import scala.collection.immutable.Nil.:::
 
-case class Room(id: Long, number: String, rtype: String)
+case class Guest(id: Long, name: String)
 
-case class RoomsList(roomsList: List[Room])
+case class GuestsList(guestsList: List[Guest])
 
-// select field1, field2 from is better than to select * from
-// by default jdbc rolls back transaction when throw exception
-object RoomDao extends Dao[Room] {
+object GuestDao extends Dao[Guest] {
 
-  // https://www.oreilly.com/library/view/scala-cookbook/9781449340292/ch16s02.html
-  def findById(id: Long): Room = {
+  def findById(id: Long): Guest = {
     val connection: Connection = ConnectionProvider.openConnection()
     var resultSet: ResultSet = null
-    var room: Room = null
+    var guest: Guest = null
     try {
-      resultSet = connection.createStatement().executeQuery(s"""SELECT id, number, type FROM \"Room\" WHERE id = $id LIMIT 1""")
+      resultSet = connection.createStatement().executeQuery(s"""SELECT id, name FROM \"Guest\" WHERE id = $id LIMIT 1""")
       if (resultSet.next()) {
-        room = Room(resultSet.getLong("id"), resultSet.getString("number"), resultSet.getString("type"))
+        guest = Guest(resultSet.getLong("id"), resultSet.getString("name"))
       }
-      room
+      guest
     } catch {
       case e: Exception => throw e
     } finally {
@@ -33,16 +30,16 @@ object RoomDao extends Dao[Room] {
     }
   }
 
-  def findAll: List[Room] = {
+  def findAll: List[Guest] = {
     val connection: Connection = ConnectionProvider.openConnection()
     var resultSet: ResultSet = null
-    var rooms: List[Room] = List()
+    var guests: List[Guest] = List()
     try {
-      resultSet = connection.createStatement().executeQuery(s"""SELECT id, number, type FROM \"Room\"""")
+      resultSet = connection.createStatement().executeQuery(s"""SELECT id, name FROM \"Guest\"""")
       while (resultSet.next()) {
-        rooms = rooms ::: Room(resultSet.getLong("id"), resultSet.getString("number"), resultSet.getString("type")) :: Nil
+        guests = guests ::: Guest(resultSet.getLong("id"), resultSet.getString("name")) :: Nil
       }
-      rooms
+      guests
     } catch {
       case e: Exception => throw e
     } finally {
@@ -51,18 +48,17 @@ object RoomDao extends Dao[Room] {
     }
   }
 
-  def update(id: Long, room: Room): Unit = {
+  def update(id: Long, guest: Guest): Unit = {
     val connection: Connection = ConnectionProvider.openConnection()
     var preparedStatement: PreparedStatement = null
     try {
-      preparedStatement = connection.prepareStatement(s"""UPDATE "Room" SET number = ?, type = ? WHERE id = ?""")
-      preparedStatement.setString(1, room.number)
-      preparedStatement.setString(2, room.rtype)
-      preparedStatement.setLong(3, id)
+      preparedStatement = connection.prepareStatement(s"""UPDATE "Guest" SET name = ? WHERE id = ?""")
+      preparedStatement.setString(1, guest.name)
+      preparedStatement.setLong(2, id)
       val rows: Integer = preparedStatement.executeUpdate()
 
       if rows == 0 then
-        throw new SQLException("No rooms affected.")
+        throw new SQLException("No guests affected.")
     } catch {
       case e: Exception => throw e
     } finally {
@@ -75,12 +71,12 @@ object RoomDao extends Dao[Room] {
     val connection: Connection = ConnectionProvider.openConnection()
     var preparedStatement: PreparedStatement = null
     try {
-      preparedStatement = connection.prepareStatement(s"""DELETE FROM "Room" WHERE id = ?""")
+      preparedStatement = connection.prepareStatement(s"""DELETE FROM "Guest" WHERE id = ?""")
       preparedStatement.setLong(1, id)
       val rows: Integer = preparedStatement.executeUpdate()
 
       if rows == 0 then
-        throw new SQLException("No rooms affected.")
+        throw new SQLException("No guests affected.")
     } catch {
       case e: Exception => throw e
     } finally {
@@ -89,20 +85,19 @@ object RoomDao extends Dao[Room] {
     }
   }
 
-  def insert(room: Room): Long = {
+  def insert(guest: Guest): Long = {
     val connection: Connection = ConnectionProvider.openConnection()
     var preparedStatement: PreparedStatement = null
     var resultSet: ResultSet = null
     try {
-      preparedStatement = connection.prepareStatement(s"""INSERT INTO "Room" (number, type) VALUES (?, ?) returning newId""")
-      preparedStatement.setString(1, room.number)
-      preparedStatement.setString(2, room.rtype)
+      preparedStatement = connection.prepareStatement(s"""INSERT INTO "Guest" (name) VALUES (?) returning newId""")
+      preparedStatement.setString(1, guest.name)
       preparedStatement.executeQuery()
       resultSet = preparedStatement.getResultSet
       if (resultSet.next())
         resultSet.getLong("newId")
       else
-        throw new SQLException("No rooms affected.")
+        throw new SQLException("No guests affected.")
     } catch {
       case e: Exception => throw e
     } finally {
