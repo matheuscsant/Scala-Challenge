@@ -1,4 +1,4 @@
-# Simple server with simple REST API
+# Scala Challenge - Develop booking engine service for a hotel
 
 ## Requirements
 
