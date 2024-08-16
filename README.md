@@ -73,4 +73,4 @@ This project uses Akka Http for the server and PostgreSQL JDBC Driver for databa
 
 ---
 
-## This project contains collections of postman in: src/main/resources/Scala Challenge.postman_collection.json
+## This project contains postman collection at: `src/main/resources/Scala Challenge.postman_collection.json`
