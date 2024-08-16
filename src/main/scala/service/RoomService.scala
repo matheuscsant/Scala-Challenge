@@ -2,7 +2,7 @@ package service
 
 import dao.`trait`.Dao
 import dao.{Room, RoomDao, RoomsList}
-import resource.exception.ResourceNotFound
+import resource.exception.ResourceNotFoundException
 
 object RoomService {
 
@@ -11,7 +11,7 @@ object RoomService {
   def getRoomById(id: Long): Room = {
     val result: Room = dao.findById(id)
     if result == null then
-      throw ResourceNotFound("Room not found")
+      throw ResourceNotFoundException("Room not found")
     else
       result
   }
@@ -19,7 +19,7 @@ object RoomService {
   def getAllRooms: RoomsList = {
     val result: RoomsList = RoomsList(dao.findAll)
     if result.roomsList.isEmpty then
-      throw ResourceNotFound("No rooms were found.")
+      throw ResourceNotFoundException("No rooms were found.")
     else
       result
   }

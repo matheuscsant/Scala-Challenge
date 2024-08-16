@@ -20,7 +20,7 @@ object RoomDao extends Dao[Room] {
     var resultSet: ResultSet = null
     var room: Room = null
     try {
-      resultSet = connection.createStatement().executeQuery(s"""SELECT id, number, type FROM \"Room\" WHERE id = $id LIMIT 1""")
+      resultSet = connection.createStatement().executeQuery(s"""SELECT id, number, type FROM \"room\" WHERE id = $id LIMIT 1""")
       if (resultSet.next()) {
         room = Room(resultSet.getLong("id"), resultSet.getString("number"), resultSet.getString("type"))
       }
@@ -38,7 +38,7 @@ object RoomDao extends Dao[Room] {
     var resultSet: ResultSet = null
     var rooms: List[Room] = List()
     try {
-      resultSet = connection.createStatement().executeQuery(s"""SELECT id, number, type FROM \"Room\"""")
+      resultSet = connection.createStatement().executeQuery(s"""SELECT id, number, type FROM \"room\"""")
       while (resultSet.next()) {
         rooms = rooms ::: Room(resultSet.getLong("id"), resultSet.getString("number"), resultSet.getString("type")) :: Nil
       }
@@ -55,7 +55,7 @@ object RoomDao extends Dao[Room] {
     val connection: Connection = ConnectionProvider.openConnection()
     var preparedStatement: PreparedStatement = null
     try {
-      preparedStatement = connection.prepareStatement(s"""UPDATE "Room" SET number = ?, type = ? WHERE id = ?""")
+      preparedStatement = connection.prepareStatement(s"""UPDATE "room" SET number = ?, type = ? WHERE id = ?""")
       preparedStatement.setString(1, room.number)
       preparedStatement.setString(2, room.rtype)
       preparedStatement.setLong(3, id)
@@ -75,7 +75,7 @@ object RoomDao extends Dao[Room] {
     val connection: Connection = ConnectionProvider.openConnection()
     var preparedStatement: PreparedStatement = null
     try {
-      preparedStatement = connection.prepareStatement(s"""DELETE FROM "Room" WHERE id = ?""")
+      preparedStatement = connection.prepareStatement(s"""DELETE FROM "room" WHERE id = ?""")
       preparedStatement.setLong(1, id)
       val rows: Integer = preparedStatement.executeUpdate()
 
@@ -94,18 +94,19 @@ object RoomDao extends Dao[Room] {
     var preparedStatement: PreparedStatement = null
     var resultSet: ResultSet = null
     try {
-      preparedStatement = connection.prepareStatement(s"""INSERT INTO "Room" (number, type) VALUES (?, ?) returning newId""")
+      preparedStatement = connection.prepareStatement(s"""INSERT INTO "room" (number, type) VALUES (?, ?) returning id""")
       preparedStatement.setString(1, room.number)
       preparedStatement.setString(2, room.rtype)
       resultSet = preparedStatement.executeQuery()
       if (resultSet.next())
-        resultSet.getLong("newId")
+        resultSet.getLong("id")
       else
         throw new SQLException("No rooms affected.")
     } catch {
       case e: Exception => throw e
     } finally {
-      resultSet.close()
+      if resultSet != null then
+        resultSet.close()
       preparedStatement.close()
       connection.close()
     }

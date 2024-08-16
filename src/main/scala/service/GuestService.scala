@@ -2,7 +2,7 @@ package service
 
 import dao.`trait`.Dao
 import dao.*
-import resource.exception.ResourceNotFound
+import resource.exception.ResourceNotFoundException
 
 object GuestService {
 
@@ -11,7 +11,7 @@ object GuestService {
   def getGuestById(id: Long): Guest = {
     val result: Guest = dao.findById(id)
     if result == null then
-      throw ResourceNotFound("Guest not found")
+      throw ResourceNotFoundException("Guest not found")
     else
       result
   }
@@ -19,7 +19,7 @@ object GuestService {
   def getAllGuest: GuestsList = {
     val result: GuestsList = GuestsList(dao.findAll)
     if result.guestsList.isEmpty then
-      throw ResourceNotFound("No guests were found.")
+      throw ResourceNotFoundException("No guests were found.")
     else
       result
   }

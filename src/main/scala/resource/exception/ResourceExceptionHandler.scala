@@ -11,8 +11,12 @@ import java.sql.SQLException
 import java.time.format.DateTimeFormatter
 import java.time.{Instant, ZoneId}
 
-case class ResourceNotFound(private val message: String = "",
-                            private val cause: Throwable = None.orNull)
+case class ResourceNotFoundException(private val message: String = "",
+                                     private val cause: Throwable = None.orNull)
+  extends Exception(message, cause)
+
+case class ValidationException(private val message: String = "",
+                               private val cause: Throwable = None.orNull)
   extends Exception(message, cause)
 
 case class StandardResponse(message: String, result: String, moment: String)
@@ -25,10 +29,15 @@ object ResourceExceptionHandler {
 
   // https://doc.akka.io/docs/akka-http/current/routing-dsl/exception-handling.html
   val customExceptionHandler: ExceptionHandler = ExceptionHandler {
-    case e: ResourceNotFound =>
+    case e: ResourceNotFoundException =>
       extractUri {
         uri =>
           complete(StatusCodes.NotFound -> StandardResponse(e.getMessage, "Resource not found", formatter.format(Instant.now())))
+      }
+    case e: ValidationException =>
+      extractUri {
+        uri =>
+          complete(StatusCodes.BadRequest -> StandardResponse(e.getMessage, "Validation failure", formatter.format(Instant.now())))
       }
     case e: SQLException =>
       extractUri {

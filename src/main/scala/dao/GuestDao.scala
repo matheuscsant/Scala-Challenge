@@ -17,7 +17,7 @@ object GuestDao extends Dao[Guest] {
     var resultSet: ResultSet = null
     var guest: Guest = null
     try {
-      resultSet = connection.createStatement().executeQuery(s"""SELECT id, name FROM \"Guest\" WHERE id = $id LIMIT 1""")
+      resultSet = connection.createStatement().executeQuery(s"""SELECT id, name FROM \"guest\" WHERE id = $id LIMIT 1""")
       if (resultSet.next()) {
         guest = Guest(resultSet.getLong("id"), resultSet.getString("name"))
       }
@@ -35,7 +35,7 @@ object GuestDao extends Dao[Guest] {
     var resultSet: ResultSet = null
     var guests: List[Guest] = List()
     try {
-      resultSet = connection.createStatement().executeQuery(s"""SELECT id, name FROM \"Guest\"""")
+      resultSet = connection.createStatement().executeQuery(s"""SELECT id, name FROM \"guest\"""")
       while (resultSet.next()) {
         guests = guests ::: Guest(resultSet.getLong("id"), resultSet.getString("name")) :: Nil
       }
@@ -52,7 +52,7 @@ object GuestDao extends Dao[Guest] {
     val connection: Connection = ConnectionProvider.openConnection()
     var preparedStatement: PreparedStatement = null
     try {
-      preparedStatement = connection.prepareStatement(s"""UPDATE "Guest" SET name = ? WHERE id = ?""")
+      preparedStatement = connection.prepareStatement(s"""UPDATE "guest" SET name = ? WHERE id = ?""")
       preparedStatement.setString(1, guest.name)
       preparedStatement.setLong(2, id)
       val rows: Integer = preparedStatement.executeUpdate()
@@ -71,7 +71,7 @@ object GuestDao extends Dao[Guest] {
     val connection: Connection = ConnectionProvider.openConnection()
     var preparedStatement: PreparedStatement = null
     try {
-      preparedStatement = connection.prepareStatement(s"""DELETE FROM "Guest" WHERE id = ?""")
+      preparedStatement = connection.prepareStatement(s"""DELETE FROM "guest" WHERE id = ?""")
       preparedStatement.setLong(1, id)
       val rows: Integer = preparedStatement.executeUpdate()
 
@@ -90,17 +90,18 @@ object GuestDao extends Dao[Guest] {
     var preparedStatement: PreparedStatement = null
     var resultSet: ResultSet = null
     try {
-      preparedStatement = connection.prepareStatement(s"""INSERT INTO "Guest" (name) VALUES (?) returning newId""")
+      preparedStatement = connection.prepareStatement(s"""INSERT INTO "guest" (name) VALUES (?) returning id""")
       preparedStatement.setString(1, guest.name)
       resultSet = preparedStatement.executeQuery()
       if (resultSet.next())
-        resultSet.getLong("newId")
+        resultSet.getLong("id")
       else
         throw new SQLException("No guests affected.")
     } catch {
       case e: Exception => throw e
     } finally {
-      resultSet.close()
+      if resultSet != null then
+        resultSet.close()
       preparedStatement.close()
       connection.close()
     }
