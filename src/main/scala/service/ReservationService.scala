@@ -29,6 +29,7 @@ object ReservationService {
   }
 
   def updateReservation(id: Long, reservation: Reservation): Unit = {
+    alreadyExistsReservation(reservation)
     dao.update(id, reservation)
   }
 
@@ -48,6 +49,11 @@ object ReservationService {
   }
 
   def createReservation(reservation: Reservation): Long = {
+    alreadyExistsReservation(reservation)
+    dao.insert(reservation)
+  }
+
+  private def alreadyExistsReservation(reservation: Reservation): Unit = {
     // checking if the informations exists
     guestService.getGuestById(reservation.guestId)
     roomService.getRoomById(reservation.roomId)
@@ -62,7 +68,8 @@ object ReservationService {
     // validating moments
     if checkIn.after(checkOut) then
       throw ValidationException("Check-In date is after Check-Out date")
-    else if checkIn.equals(checkOut) then
+
+    if checkIn.equals(checkOut) then
       throw ValidationException("Check-In date is the same at Check-Out date")
 
     // checking if there is a reservation for these moments
@@ -71,15 +78,12 @@ object ReservationService {
     if (existsReservation != null) {
       val existsCheckIn: Timestamp = Timestamp.valueOf(Timestamp.valueOf(existsReservation.checkIn).toLocalDateTime.minusHours(4))
       val existsCheckOut: Timestamp = Timestamp.valueOf(Timestamp.valueOf(existsReservation.checkOut).toLocalDateTime.plusHours(4))
-
       if checkIn.after(existsCheckIn) && checkIn.before(existsCheckOut) then
         throw ValidationException(s"There is already a reservation for this check-in, the next reservation, is after to: $existsCheckOut")
       else
         throw ValidationException(s"There is already a reservation for this check-Out, the possible ckeck-Out, is before to: $existsCheckIn. Or " +
           s"the next reservation, is after to: $existsCheckOut")
     }
-    else
-      dao.insert(reservation)
   }
 
 }
