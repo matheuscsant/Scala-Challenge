@@ -54,14 +54,14 @@ object ReservationService {
   }
 
   private def alreadyExistsReservation(reservation: Reservation): Unit = {
-    // checking if the informations exists
+    // checking if the information exists
     guestService.getGuestById(reservation.guestId)
     roomService.getRoomById(reservation.roomId)
 
     val checkIn: Timestamp = Timestamp.valueOf(reservation.checkIn)
     val checkOut: Timestamp = Timestamp.valueOf(reservation.checkOut)
 
-    // adding four hours to clenup
+    // adding four hours to clean up
     val checkInWithFourHours: Timestamp = Timestamp.valueOf(checkIn.toLocalDateTime.minusHours(4))
     val checkOutWithFourHours: Timestamp = Timestamp.valueOf(checkOut.toLocalDateTime.plusHours(4))
 
@@ -81,9 +81,8 @@ object ReservationService {
       if checkIn.after(existsCheckIn) && checkIn.before(existsCheckOut) then
         throw ValidationException(s"There is already a reservation for this check-in, the next reservation, is after to: $existsCheckOut")
       else
-        throw ValidationException(s"There is already a reservation for this check-Out, the possible ckeck-Out, is before to: $existsCheckIn. Or " +
+        throw ValidationException(s"There is already a reservation for this check-Out, the possible check-Out, is before to: $existsCheckIn. Or " +
           s"the next reservation, is after to: $existsCheckOut")
     }
   }
-
 }

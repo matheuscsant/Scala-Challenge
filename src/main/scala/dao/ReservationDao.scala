@@ -18,10 +18,13 @@ object ReservationDao extends Dao[Reservation] {
 
   def findById(id: Long): Reservation = {
     val connection: Connection = ConnectionProvider.openConnection()
+    var preparedStatement: PreparedStatement = null
     var resultSet: ResultSet = null
     var reservation: Reservation = null
     try {
-      resultSet = connection.createStatement().executeQuery(s"""SELECT id, guest_id, room_id, check_in, check_out FROM \"reservation\" WHERE id = $id LIMIT 1""")
+      preparedStatement = connection.prepareCall(s"""SELECT id, guest_id, room_id, check_in, check_out FROM \"reservation\" WHERE id = ? LIMIT 1""")
+      preparedStatement.setLong(1, id)
+      resultSet = preparedStatement.executeQuery()
       if resultSet.next() then
         reservation = Reservation(resultSet.getLong("id"), resultSet.getLong("guest_id"),
           resultSet.getLong("room_id"), resultSet.getTimestamp("check_in").toString, resultSet.getTimestamp("check_out").toString)
@@ -29,7 +32,9 @@ object ReservationDao extends Dao[Reservation] {
     } catch {
       case e: Exception => throw e
     } finally {
-      resultSet.close()
+      if resultSet != null then
+        resultSet.close()
+      preparedStatement.close()
       connection.close()
     }
   }

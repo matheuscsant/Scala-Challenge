@@ -12,15 +12,19 @@ case class RoomsList(roomsList: List[Room])
 
 // select field1, field2 from is better than to select * from
 // by default jdbc rolls back transaction when throw exception
+// about SQL Injection and how the JDBC Driver protect us: https://stackoverflow.com/questions/8263371/how-can-prepared-statements-protect-from-sql-injection-attacks
 object RoomDao extends Dao[Room] {
 
   // https://www.oreilly.com/library/view/scala-cookbook/9781449340292/ch16s02.html
   def findById(id: Long): Room = {
     val connection: Connection = ConnectionProvider.openConnection()
+    var preparedStatement: PreparedStatement = null
     var resultSet: ResultSet = null
     var room: Room = null
     try {
-      resultSet = connection.createStatement().executeQuery(s"""SELECT id, number, type FROM \"room\" WHERE id = $id LIMIT 1""")
+      preparedStatement = connection.prepareCall(s"""SELECT id, number, type FROM \"room\" WHERE id = ? LIMIT 1""")
+      preparedStatement.setLong(1, id)
+      resultSet = preparedStatement.executeQuery()
       if (resultSet.next()) {
         room = Room(resultSet.getLong("id"), resultSet.getString("number"), resultSet.getString("type"))
       }
@@ -28,7 +32,9 @@ object RoomDao extends Dao[Room] {
     } catch {
       case e: Exception => throw e
     } finally {
-      resultSet.close()
+      if resultSet != null then
+        resultSet.close()
+      preparedStatement.close()
       connection.close()
     }
   }

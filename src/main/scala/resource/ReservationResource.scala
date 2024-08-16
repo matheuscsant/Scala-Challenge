@@ -23,45 +23,46 @@ object ReservationResource {
   implicit val occupancyListMarshaller: spray.json.RootJsonFormat[OccupancyList] = jsonFormat1(OccupancyList.apply)
 
   val allRoutesReservation: Route = {
-    path("reservation" / LongNumber) { id =>
-      get {
-        val result: Reservation = reservationService.getReservationById(id)
-        complete(result)
+    //    path("reservation" / LongNumber) { id =>
+    //      get {
+    //        val result: Reservation = reservationService.getReservationById(id)
+    //        complete(result)
+    //      }
+    //    }
+    //      ~
+    //      path("reservation") {
+    //        get {
+    //          complete {
+    //            reservationService.getAllReservation
+    //          }
+    //        }
+    //      }
+    //      ~
+    path("reservation" slash "occupancy") {
+      parameters("date") {
+        date =>
+          get {
+            complete {
+              reservationService.getOccupancyByDate(date)
+            }
+          }
       }
+
     }
       ~
-      path("reservation") {
-        get {
-          complete {
-            reservationService.getAllReservation
-          }
-        }
-      } ~
-      path("reservation" slash "occupancy") {
-        parameters("date") {
-          date =>
-            get {
-              complete {
-                reservationService.getOccupancyByDate(date)
-              }
-            }
-        }
-
-      }
-      ~
-      path("reservation" / LongNumber) { id =>
-        put {
-          entity(as[Reservation]) {
-            reservation =>
-              complete {
-                reservationService.updateReservation(id, reservation)
-                HttpResponse(StatusCodes.OK)
-              }
-          }
-
-        }
-      }
-      ~
+      //      path("reservation" / LongNumber) { id =>
+      //        put {
+      //          entity(as[Reservation]) {
+      //            reservation =>
+      //              complete {
+      //                reservationService.updateReservation(id, reservation)
+      //                HttpResponse(StatusCodes.OK)
+      //              }
+      //          }
+      //
+      //        }
+      //      }
+      //      ~
       path("reservation") {
         post {
           extractUri {

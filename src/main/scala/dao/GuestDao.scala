@@ -14,10 +14,13 @@ object GuestDao extends Dao[Guest] {
 
   def findById(id: Long): Guest = {
     val connection: Connection = ConnectionProvider.openConnection()
+    var preparedStatement: PreparedStatement = null
     var resultSet: ResultSet = null
     var guest: Guest = null
     try {
-      resultSet = connection.createStatement().executeQuery(s"""SELECT id, name FROM \"guest\" WHERE id = $id LIMIT 1""")
+      preparedStatement = connection.prepareStatement(s"""SELECT id, name FROM \"guest\" WHERE id = ? LIMIT 1""")
+      preparedStatement.setLong(1, id)
+      resultSet = preparedStatement.executeQuery()
       if (resultSet.next()) {
         guest = Guest(resultSet.getLong("id"), resultSet.getString("name"))
       }
@@ -25,7 +28,9 @@ object GuestDao extends Dao[Guest] {
     } catch {
       case e: Exception => throw e
     } finally {
-      resultSet.close()
+      if resultSet != null then
+        resultSet.close()
+      preparedStatement.close()
       connection.close()
     }
   }

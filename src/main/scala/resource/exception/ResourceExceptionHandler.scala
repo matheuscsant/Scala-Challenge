@@ -53,6 +53,13 @@ object ResourceExceptionHandler {
         case MalformedRequestContentRejection(message, cause) =>
           complete(BadRequest -> StandardResponse(message, "API Rejection", formatter.format(Instant.now())))
       }
+      .handleAll[MethodRejection] {
+        methodRejections =>
+          complete(MethodNotAllowed, StandardResponse("Method not allowed", "API Rejection", formatter.format(Instant.now())))
+      }
+      .handleNotFound {
+        complete((NotFound, StandardResponse("No endpoint were found", "API Rejection", formatter.format(Instant.now()))))
+      }
       .result()
 
 }
