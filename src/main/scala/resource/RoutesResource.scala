@@ -13,7 +13,9 @@ object RoutesResource {
                        reservationRoutes: Route = allRoutesReservation): Route = {
     handleRejections(customRejectionHandler) {
       handleExceptions(customExceptionHandler) {
-        roomRoutes ~ guestRoutes ~ reservationRoutes
+        cors() {
+          roomRoutes ~ guestRoutes ~ reservationRoutes
+        }
       }
     }
 

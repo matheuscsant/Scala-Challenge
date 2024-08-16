@@ -1,23 +1,29 @@
+CREATE DATABASE challenge_scala
+    WITH
+    OWNER = postgres
+    ENCODING = 'UTF8'
+    LC_COLLATE = 'Portuguese_Brazil.1252'
+    LC_CTYPE = 'Portuguese_Brazil.1252'
+    LOCALE_PROVIDER = 'libc'
+    TABLESPACE = pg_default
+    CONNECTION LIMIT = -1
+    IS_TEMPLATE = False;
+
 CREATE TABLE IF NOT EXISTS public.room
 (
     id integer NOT NULL GENERATED ALWAYS AS IDENTITY ( INCREMENT 1 START 1 MINVALUE 1 MAXVALUE 2147483647 CACHE 1 ),
     "number" character varying(20) COLLATE pg_catalog."default",
     type character varying(50) COLLATE pg_catalog."default",
     CONSTRAINT room_pkey PRIMARY KEY (id)
-)
+);
 
-ALTER TABLE IF EXISTS public.room
-    OWNER to postgres;
 
 CREATE TABLE IF NOT EXISTS public.guest
 (
     id integer NOT NULL GENERATED ALWAYS AS IDENTITY ( INCREMENT 1 START 1 MINVALUE 1 MAXVALUE 2147483647 CACHE 1 ),
     name character varying(100) COLLATE pg_catalog."default",
     CONSTRAINT guest_pkey PRIMARY KEY (id)
-)
-
-ALTER TABLE IF EXISTS public.guest
-    OWNER to postgres;
+);
 
 CREATE TABLE IF NOT EXISTS public.reservation
 (
@@ -35,10 +41,7 @@ CREATE TABLE IF NOT EXISTS public.reservation
         REFERENCES public.room (id) MATCH SIMPLE
         ON UPDATE NO ACTION
         ON DELETE NO ACTION
-)
-
-ALTER TABLE IF EXISTS public.reservation
-    OWNER to postgres;
+);
 
 CREATE OR REPLACE VIEW public.view_occupancy
  AS
