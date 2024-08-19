@@ -39,6 +39,11 @@ object ResourceExceptionHandler {
         uri =>
           complete(StatusCodes.BadRequest -> StandardResponse(e.getMessage, "Validation failure", formatter.format(Instant.now())))
       }
+    case e: NullPointerException =>
+      extractUri {
+        uri =>
+          complete(StatusCodes.InternalServerError -> StandardResponse(e.getMessage, "Server error", formatter.format(Instant.now())))
+      }
     case e: SQLException =>
       extractUri {
         uri =>
