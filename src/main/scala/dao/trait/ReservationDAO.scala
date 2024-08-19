@@ -4,7 +4,7 @@ import dao.{Occupancy, Reservation}
 
 import java.sql.{SQLException, Timestamp}
 
-// SOLID -> I -> Interface Segregation Principle -> Many interfaces are better than a general interface
+// SOLID -> I -> Interface Segregation Principle -> Many specific interfaces are better than a general interface
 trait ReservationDAO extends DAO[Reservation] {
 
   @throws(classOf[SQLException])

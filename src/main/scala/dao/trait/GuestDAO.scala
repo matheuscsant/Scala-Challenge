@@ -4,7 +4,7 @@ import dao.Guest
 
 import java.sql.SQLException
 
-// SOLID -> I -> Interface Segregation Principle -> Many interfaces are better than a general interface
+// SOLID -> I -> Interface Segregation Principle -> Many specific interfaces are better than a general interface
 trait GuestDAO extends DAO[Guest] {
 
   @throws(classOf[SQLException])
