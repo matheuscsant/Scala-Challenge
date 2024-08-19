@@ -1,12 +1,13 @@
 package service
 
-import dao.`trait`.Dao
 import dao.*
+import dao.`trait`.GuestDAO
 import resource.exception.ResourceNotFoundException
 
 object GuestService {
 
-  private val dao: Dao[Guest] = GuestDao
+  // SOLID -> D -> Dependency Inversion Principle -> Depend on abstractions, not concrete implementations
+  private val dao: GuestDAO = GuestDao
 
   def getGuestById(id: Long): Guest = {
     val result: Guest = dao.findById(id)

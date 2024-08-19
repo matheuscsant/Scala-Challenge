@@ -1,7 +1,7 @@
 package dao
 
 import connection.ConnectionProvider
-import dao.`trait`.Dao
+import dao.`trait`.ReservationDAO
 
 import java.sql.*
 import scala.collection.immutable.Nil.:::
@@ -14,7 +14,7 @@ case class Occupancy(guest: Guest, room: Room, checkIn: String, checkOut: String
 
 case class OccupancyList(occupancyList: List[Occupancy])
 
-object ReservationDao extends Dao[Reservation] {
+object ReservationDao extends ReservationDAO {
 
   def findById(id: Long): Reservation = {
     val connection: Connection = ConnectionProvider.openConnection()

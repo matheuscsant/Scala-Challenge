@@ -1,7 +1,7 @@
 package dao
 
 import connection.ConnectionProvider
-import dao.`trait`.Dao
+import dao.`trait`.GuestDAO
 
 import java.sql.{Connection, PreparedStatement, ResultSet, SQLException}
 import scala.collection.immutable.Nil.:::
@@ -10,7 +10,7 @@ case class Guest(id: Long, name: String)
 
 case class GuestsList(guestsList: List[Guest])
 
-object GuestDao extends Dao[Guest] {
+object GuestDao extends GuestDAO {
 
   def findById(id: Long): Guest = {
     val connection: Connection = ConnectionProvider.openConnection()

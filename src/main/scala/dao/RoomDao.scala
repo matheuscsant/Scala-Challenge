@@ -1,7 +1,7 @@
 package dao
 
 import connection.ConnectionProvider
-import dao.`trait`.Dao
+import dao.`trait`.RoomDAO
 
 import java.sql.{Connection, PreparedStatement, ResultSet, SQLException}
 import scala.collection.immutable.Nil.:::
@@ -13,7 +13,7 @@ case class RoomsList(roomsList: List[Room])
 // select field1, field2 from is better than to select * from
 // by default jdbc rolls back transaction when throw exception
 // about SQL Injection and how the JDBC Driver protect us: https://stackoverflow.com/questions/8263371/how-can-prepared-statements-protect-from-sql-injection-attacks
-object RoomDao extends Dao[Room] {
+object RoomDao extends RoomDAO {
 
   // https://www.oreilly.com/library/view/scala-cookbook/9781449340292/ch16s02.html
   def findById(id: Long): Room = {

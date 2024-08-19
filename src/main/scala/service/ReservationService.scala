@@ -1,6 +1,7 @@
 package service
 
 import dao.*
+import dao.`trait`.ReservationDAO
 import resource.exception.{ResourceNotFoundException, ValidationException}
 
 import java.sql.Timestamp
@@ -8,7 +9,8 @@ import java.time.{LocalDate, LocalDateTime, LocalTime}
 
 object ReservationService {
 
-  private val dao: ReservationDao.type = ReservationDao
+  // SOLID -> D -> Dependency Inversion Principle -> Depend on abstractions, not concrete implementations
+  private val dao: ReservationDAO = ReservationDao
   private val guestService: GuestService.type = GuestService
   private val roomService: RoomService.type = RoomService
 
