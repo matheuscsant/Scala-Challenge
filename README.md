@@ -16,7 +16,7 @@ $ sbt
 $ sbt run
 ```
 
-Database connection details are found in `src/main/scala/connection/ConnectionProvider.scala`.
+Database connection details are found in: `src/main/scala/connection/ConnectionProvider.scala`.
 
 ## Endpoints available for this API:
 
@@ -76,9 +76,9 @@ This project uses Akka Http for the server and PostgreSQL JDBC Driver for databa
 ### Why to use SQL Database instead of NoSQL Database
 
 - Mainly because we have in this project, relationships in the entities and specifically in Reservation it is
-  possible to make a query with Timestamp (complex query), so I think the best options is a SQL Database
+  possible to make a query with Timestamp (complex query), so I think the best option is a SQL Database
 - [See more about why to use SQL Database](https://www.mongodb.com/resources/basics/databases/nosql-explained/nosql-vs-sql)
 
 ---
 
-## This project contains postman collection at: `src/main/resources/Scala Challenge.postman_collection.json`
+## This project contains postman collection in: `src/main/resources/Scala Challenge.postman_collection.json`
