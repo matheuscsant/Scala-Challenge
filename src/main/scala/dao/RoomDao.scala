@@ -16,7 +16,7 @@ case class RoomsList(roomsList: List[Room])
 object RoomDao extends RoomDAO {
 
   // https://www.oreilly.com/library/view/scala-cookbook/9781449340292/ch16s02.html
-  def findById(id: Long): Room = {
+  override def findById(id: Long): Room = {
     val connection: Connection = ConnectionProvider.openConnection()
     var preparedStatement: PreparedStatement = null
     var resultSet: ResultSet = null
@@ -39,7 +39,7 @@ object RoomDao extends RoomDAO {
     }
   }
 
-  def findAll: List[Room] = {
+  override def findAll: List[Room] = {
     val connection: Connection = ConnectionProvider.openConnection()
     var resultSet: ResultSet = null
     var rooms: List[Room] = List()
@@ -57,7 +57,7 @@ object RoomDao extends RoomDAO {
     }
   }
 
-  def update(id: Long, room: Room): Unit = {
+  override def update(id: Long, room: Room): Unit = {
     val connection: Connection = ConnectionProvider.openConnection()
     var preparedStatement: PreparedStatement = null
     try {
@@ -77,7 +77,7 @@ object RoomDao extends RoomDAO {
     }
   }
 
-  def delete(id: Long): Unit = {
+  override def delete(id: Long): Unit = {
     val connection: Connection = ConnectionProvider.openConnection()
     var preparedStatement: PreparedStatement = null
     try {
@@ -95,7 +95,7 @@ object RoomDao extends RoomDAO {
     }
   }
 
-  def insert(room: Room): Long = {
+  override def insert(room: Room): Long = {
     val connection: Connection = ConnectionProvider.openConnection()
     var preparedStatement: PreparedStatement = null
     var resultSet: ResultSet = null

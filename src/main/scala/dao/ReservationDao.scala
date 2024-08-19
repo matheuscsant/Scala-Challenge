@@ -16,7 +16,7 @@ case class OccupancyList(occupancyList: List[Occupancy])
 
 object ReservationDao extends ReservationDAO {
 
-  def findById(id: Long): Reservation = {
+  override def findById(id: Long): Reservation = {
     val connection: Connection = ConnectionProvider.openConnection()
     var preparedStatement: PreparedStatement = null
     var resultSet: ResultSet = null
@@ -39,8 +39,8 @@ object ReservationDao extends ReservationDAO {
     }
   }
 
-  def findByRoomIdCheckInCheckOut(id: Long, checkIn: Timestamp,
-                                  checkOut: Timestamp): Reservation = {
+  override def findByRoomIdCheckInCheckOut(id: Long, checkIn: Timestamp,
+                                           checkOut: Timestamp): Reservation = {
     val connection: Connection = ConnectionProvider.openConnection()
     var preparedStatement: PreparedStatement = null
     var resultSet: ResultSet = null
@@ -72,7 +72,7 @@ object ReservationDao extends ReservationDAO {
     }
   }
 
-  def findAllByDate(firstMoment: Timestamp, lastMoment: Timestamp): List[Occupancy] = {
+  override def findAllByDate(firstMoment: Timestamp, lastMoment: Timestamp): List[Occupancy] = {
     val connection: Connection = ConnectionProvider.openConnection()
     var preparedStatement: PreparedStatement = null
     var resultSet: ResultSet = null
@@ -105,7 +105,7 @@ object ReservationDao extends ReservationDAO {
     }
   }
 
-  def findAll: List[Reservation] = {
+  override def findAll: List[Reservation] = {
     val connection: Connection = ConnectionProvider.openConnection()
     var resultSet: ResultSet = null
     var reservations: List[Reservation] = List()
@@ -123,7 +123,7 @@ object ReservationDao extends ReservationDAO {
     }
   }
 
-  def update(id: Long, reservation: Reservation): Unit = {
+  override def update(id: Long, reservation: Reservation): Unit = {
     val connection: Connection = ConnectionProvider.openConnection()
     var preparedStatement: PreparedStatement = null
     try {
@@ -142,7 +142,7 @@ object ReservationDao extends ReservationDAO {
     }
   }
 
-  def delete(id: Long): Unit = {
+  override def delete(id: Long): Unit = {
     val connection: Connection = ConnectionProvider.openConnection()
     var preparedStatement: PreparedStatement = null
     try {
@@ -160,7 +160,7 @@ object ReservationDao extends ReservationDAO {
     }
   }
 
-  def insert(reservation: Reservation): Long = {
+  override def insert(reservation: Reservation): Long = {
     val connection: Connection = ConnectionProvider.openConnection()
     var preparedStatement: PreparedStatement = null
     var resultSet: ResultSet = null

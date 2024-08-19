@@ -12,7 +12,7 @@ case class GuestsList(guestsList: List[Guest])
 
 object GuestDao extends GuestDAO {
 
-  def findById(id: Long): Guest = {
+  override def findById(id: Long): Guest = {
     val connection: Connection = ConnectionProvider.openConnection()
     var preparedStatement: PreparedStatement = null
     var resultSet: ResultSet = null
@@ -35,7 +35,7 @@ object GuestDao extends GuestDAO {
     }
   }
 
-  def findAll: List[Guest] = {
+  override def findAll: List[Guest] = {
     val connection: Connection = ConnectionProvider.openConnection()
     var resultSet: ResultSet = null
     var guests: List[Guest] = List()
@@ -53,7 +53,7 @@ object GuestDao extends GuestDAO {
     }
   }
 
-  def update(id: Long, guest: Guest): Unit = {
+  override def update(id: Long, guest: Guest): Unit = {
     val connection: Connection = ConnectionProvider.openConnection()
     var preparedStatement: PreparedStatement = null
     try {
@@ -72,7 +72,7 @@ object GuestDao extends GuestDAO {
     }
   }
 
-  def delete(id: Long): Unit = {
+  override def delete(id: Long): Unit = {
     val connection: Connection = ConnectionProvider.openConnection()
     var preparedStatement: PreparedStatement = null
     try {
@@ -90,7 +90,7 @@ object GuestDao extends GuestDAO {
     }
   }
 
-  def insert(guest: Guest): Long = {
+  override def insert(guest: Guest): Long = {
     val connection: Connection = ConnectionProvider.openConnection()
     var preparedStatement: PreparedStatement = null
     var resultSet: ResultSet = null
