@@ -5,7 +5,7 @@ import dao.{Occupancy, Reservation}
 import java.sql.Timestamp
 
 // SOLID -> I -> Interface Segregation Principle -> Many interfaces are better than a general interface
-trait ReservationDAO extends Dao[Reservation] {
+trait ReservationDAO extends DAO[Reservation] {
 
   def findById(id: Long): Reservation
 

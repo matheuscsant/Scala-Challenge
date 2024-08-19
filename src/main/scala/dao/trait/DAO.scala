@@ -1,6 +1,6 @@
 package dao.`trait`
 
-trait Dao[T] {
+trait DAO[T] {
   def findById(id: Long): T
 
   def findAll: List[T]

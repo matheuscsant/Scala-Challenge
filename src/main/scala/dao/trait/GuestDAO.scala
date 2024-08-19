@@ -3,7 +3,7 @@ package dao.`trait`
 import dao.Guest
 
 // SOLID -> I -> Interface Segregation Principle -> Many interfaces are better than a general interface
-trait GuestDAO extends Dao[Guest] {
+trait GuestDAO extends DAO[Guest] {
 
   def findById(id: Long): Guest
 
